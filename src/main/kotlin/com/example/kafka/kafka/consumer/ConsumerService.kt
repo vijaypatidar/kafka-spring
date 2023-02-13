@@ -22,12 +22,12 @@ class ConsumerService(@Autowired val mapper: ObjectMapper) {
             logger.error(mapper.writeValueAsString(map))
         }
     }
-
-    @KafkaListener(topics = ["\${topic}"], groupId = "G1")
-    fun single(user: User) {
-        val map = HashMap<String, Any>()
-        map["message"] = user
-        map["createdAt"] = Date()
-        logger.error(mapper.writeValueAsString(map))
-    }
+//
+//    @KafkaListener(topics = ["\${topic}"], groupId = "G1")
+//    fun single(user: User) {
+//        val map = HashMap<String, Any>()
+//        map["message"] = user
+//        map["createdAt"] = Date()
+//        logger.error(mapper.writeValueAsString(map))
+//    }
 }
