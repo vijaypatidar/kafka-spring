@@ -1,0 +1,20 @@
+{
+"fields": [
+        {
+            "name": "name",
+            "type": {
+                "avro.java.string": "String",
+                "type": "string"
+            }
+        },{
+            "name": "requestId",
+            "type": {
+                "avro.java.string": "String",
+                "type": "string"
+            }
+       }
+],
+"name": "UserCreateFailedEvent",
+"namespace": "com.example.kafka.events",
+"type": "record"
+}

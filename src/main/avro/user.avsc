@@ -6,9 +6,23 @@
             "avro.java.string": "String",
             "type": "string"
         }
-    }
+    },
+    {
+         "name": "status",
+         "type": {
+             "avro.java.string": "String",
+             "type": "string"
+         }
+     },
+     {
+          "name": "requestId",
+          "type": {
+              "avro.java.string": "String",
+              "type": "string"
+          }
+     }
 ],
-"name": "User",
+"name": "UserCreateStatus",
 "namespace": "com.example.kafka.events",
 "type": "record"
 }
