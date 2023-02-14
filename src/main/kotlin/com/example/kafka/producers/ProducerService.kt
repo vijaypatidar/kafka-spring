@@ -14,7 +14,7 @@ class ProducerService(@Autowired val targetTopic: KafkaTemplate<Int, UserCreateS
 
     val faker = Random(200)
 
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 1000)
     fun test() {
         val hobbit = UserCreateStatus.newBuilder()
             .setName("Vijay")

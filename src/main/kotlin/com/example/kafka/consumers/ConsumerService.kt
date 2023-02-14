@@ -2,9 +2,7 @@ package com.example.kafka.consumers
 
 import com.example.kafka.events.UserCreateFailedEvent
 import com.example.kafka.events.UserCreateStatus
-import com.example.kafka.transformers.FailTransformer
-import com.example.kafka.transformers.SuccessTransformer
-import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
+import com.example.kafka.transformers.TransformerProvider
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
@@ -18,11 +16,16 @@ import org.springframework.stereotype.Service
 
 @Service
 class ConsumerService(
-    @Autowired val template: KafkaTemplate<Int, GenericRecord>
+    @Autowired val template: KafkaTemplate<Int, GenericRecord>,
+    @Autowired val transformerProvider: TransformerProvider
 ) {
     val logger: Logger = LoggerFactory.getLogger(ConsumerService::class.java)
 
-    @KafkaListener(topics = ["\${topic}"], groupId = "G1", batch = "true")
+    @KafkaListener(
+        topics = ["\${topic}"],
+        groupId = "\${spring.kafka.properties.group.id}",
+        batch = "true"
+    )
     fun batch(records: ConsumerRecords<Int, UserCreateStatus>) {
         records.forEach { record ->
             process(record)
@@ -31,17 +34,16 @@ class ConsumerService(
 
     private fun process(record: ConsumerRecord<Int, UserCreateStatus>) {
         logger.info("Transforming UserCreateStatus: ${record.value()}")
-        val transformer = when (record.value().getStatus()) {
-            "success" -> SuccessTransformer()
-            "failed" -> FailTransformer()
-            else -> throw RuntimeException("Unknown status")
-        }
-        KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
+        val transformer = transformerProvider.get(record.value().getStatus())
         val transformed = transformer.transform(record.value())
-        if (transformed is UserCreateFailedEvent){
-            template.send("failed",transformed)
-        }else{
-            template.send("success",transformed)
+        template.send(getTopicName(transformed), transformed)
+    }
+
+    private fun getTopicName(record: GenericRecord): String {
+        return if (record is UserCreateFailedEvent) {
+            "failed"
+        } else {
+            "success"
         }
     }
 
