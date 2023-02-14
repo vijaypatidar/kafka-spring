@@ -1,0 +1,14 @@
+{
+"fields": [
+    {
+        "name": "name",
+        "type": {
+            "avro.java.string": "String",
+            "type": "string"
+        }
+    }
+],
+"name": "User",
+"namespace": "com.example.kafka.events",
+"type": "record"
+}

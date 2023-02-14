@@ -5,14 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import java.util.*
 
 
 @Service
 class ProducerService(@Autowired val targetTopic: KafkaTemplate<String, User>) {
 
-    @Scheduled(fixedDelay = 3)
+    @Scheduled(fixedDelay = 3000)
     fun test() {
-        targetTopic.send("source", User("VIJAY" + Date().toString()))
+        val hobbit = User.newBuilder()
+            .setName("Vijay")
+            .build()
+        targetTopic.send("source", hobbit)
     }
 }
