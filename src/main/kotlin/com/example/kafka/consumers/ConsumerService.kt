@@ -1,5 +1,6 @@
 package com.example.kafka.consumers
 
+import com.example.kafka.events.UserCreateFailedEvent
 import com.example.kafka.events.UserCreateStatus
 import com.example.kafka.transformers.FailTransformer
 import com.example.kafka.transformers.SuccessTransformer
@@ -37,7 +38,11 @@ class ConsumerService(
         }
         KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
         val transformed = transformer.transform(record.value())
-        template.send("transformed", transformed)
+        if (transformed is UserCreateFailedEvent){
+            template.send("failed",transformed)
+        }else{
+            template.send("success",transformed)
+        }
     }
 
 //    @KafkaListener(topics = ["\${topic}"], groupId = "G1")
