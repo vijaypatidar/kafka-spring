@@ -2,7 +2,7 @@ package com.example.kafka.consumers
 
 import com.example.kafka.events.UserCreateFailedEvent
 import com.example.kafka.events.UserCreateStatus
-import com.example.kafka.transformers.TransformerProvider
+import com.example.kafka.mappers.DataMapperProvider
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service
 @Service
 class ConsumerService(
     @Autowired val template: KafkaTemplate<Int, GenericRecord>,
-    @Autowired val transformerProvider: TransformerProvider
+    @Autowired val dataMapperProvider: DataMapperProvider
 ) {
     val logger: Logger = LoggerFactory.getLogger(ConsumerService::class.java)
 
@@ -34,7 +34,7 @@ class ConsumerService(
 
     private fun process(record: ConsumerRecord<Int, UserCreateStatus>) {
         logger.info("Transforming UserCreateStatus: ${record.value()}")
-        val transformer = transformerProvider.get(record.value().getStatus())
+        val transformer = dataMapperProvider.get(record.value().getStatus())
         val transformed = transformer.transform(record.value())
         template.send(getTopicName(transformed), transformed)
     }

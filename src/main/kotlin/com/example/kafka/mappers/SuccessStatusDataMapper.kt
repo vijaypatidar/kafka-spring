@@ -1,11 +1,11 @@
-package com.example.kafka.transformers
+package com.example.kafka.mappers
 
 import com.example.kafka.events.UserCreateStatus
 import com.example.kafka.events.UserCreatedEvent
 import org.springframework.stereotype.Service
 
-@Service("SUCCESS_TRANSFORMER")
-class SuccessTransformer : Transformer<UserCreatedEvent> {
+@Service("SUCCESS_DATA_MAPPER")
+class SuccessStatusDataMapper : DataMapper<UserCreatedEvent> {
     override fun transform(record: UserCreateStatus): UserCreatedEvent {
         return UserCreatedEvent.newBuilder()
             .setName(record.getName())
